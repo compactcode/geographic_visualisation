@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/d3.v2.min.js" type="text/javascript"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div id="map"></div>
+  <script type="text/javascript">
+    var container  = d3.select("#map");
+    var projection = d3.geo.mercator();
+
+    projection.translate([0, 0]);
+    projection.scale(projection.scale() * 8);
+
+    var containerCenter = [
+      Math.floor(container.node().offsetWidth / 2),
+      Math.floor(container.node().offsetHeight / 2)
+    ];
+
+    var australiaCenter = projection([133.775136, -25.274398]);
+
+    var australiaCenterToContainerCenter = [
+      0 - australiaCenter[0] + containerCenter[0],
+      0 - australiaCenter[1] + containerCenter[1]
+    ];
+
+    projection.translate(australiaCenterToContainerCenter);
+
+    var map = container.append("svg");
+
+    d3.json("/data/australia.json", function(polygons) {
+      map.selectAll("path")
+        .data(polygons)
+        .enter()
+          .append("path")
+            .attr("d", d3.geo.path().projection(projection));
+    });
+
+    function id(event) {
+      return event.id;
+    }
+
+    function projectEasting(event) {
+      return projection([event.latitude, event.longitude])[0];
+    }
+
+    function projectNorthing(event) {
+      return projection([event.latitude, event.longitude])[1];
+    }
+
+    var events = [];
+
+    io.connect().on('event', function (event) {
+      events.push(event);
+
+      map.selectAll("circle")
+        .data(events, id)
+          .enter()
+            .append("circle")
+              .attr("r", 5)
+              .attr("cx", projectEasting)
+              .transition()
+                .ease("bounce")
+                .duration(2000)
+                .attr("cy", projectNorthing);
+
+    });
+  </script>
+</body>
+</html>

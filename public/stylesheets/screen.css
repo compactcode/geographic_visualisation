@@ -1,0 +1,12 @@
+#map {
+  width:  800px;
+  height: 600px;
+  margin: auto;
+}
+svg path {
+  fill: white;
+  stroke: black;
+}
+svg circle {
+  fill: red;
+}
