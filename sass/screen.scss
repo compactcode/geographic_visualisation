@@ -1,0 +1,43 @@
+@import "compass/reset";
+@import "compass/css3/box-shadow";
+@import "compass/css3/border-radius";
+@import "compass/utilities/general/clearfix";
+
+body {
+  background: #DAEDE2;
+}
+
+#container {
+  width: 800px;
+  margin: auto;
+  padding: 20px;
+  @include clearfix;
+}
+
+#notices {
+  width: 25%;
+  float: left;
+  li {
+    @include border-radius(6px);
+    @include box-shadow;
+    padding: 5px;
+    margin: 5px;
+    background: #333745;
+    color: #FFFFFF;
+  }
+}
+
+#map {
+  width: 600px;
+  height: 500px;
+  float: left;
+  path {
+    fill: #77C4D3;
+    stroke: #262B30;
+  }
+  circle {
+    fill: #EA2E49;
+    stroke: #333745;
+  }
+}
+

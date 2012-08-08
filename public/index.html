@@ -7,17 +7,24 @@
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <div id="map"></div>
+  <div id="container">
+    <ul id="notices">
+      &nbsp;
+    </ul>
+    <svg id="map">
+    </svg>
+  </div>
   <script type="text/javascript">
-    var container  = d3.select("#map");
+    var map = d3.select("#map");
+
     var projection = d3.geo.mercator();
 
     projection.translate([0, 0]);
     projection.scale(projection.scale() * 8);
 
     var containerCenter = [
-      Math.floor(container.node().offsetWidth / 2),
-      Math.floor(container.node().offsetHeight / 2)
+      Math.floor(600 / 2),
+      Math.floor(500 / 2)
     ];
 
     var australiaCenter = projection([133.775136, -25.274398]);
@@ -28,8 +35,6 @@
     ];
 
     projection.translate(australiaCenterToContainerCenter);
-
-    var map = container.append("svg");
 
     d3.json("/data/australia.json", function(polygons) {
       map.selectAll("path")
@@ -56,17 +61,46 @@
     io.connect().on('event', function (event) {
       events.push(event);
 
-      map.selectAll("circle")
-        .data(events, id)
-          .enter()
-            .append("circle")
-              .attr("r", 5)
-              .attr("cx", projectEasting)
-              .transition()
-                .ease("bounce")
-                .duration(2000)
-                .attr("cy", projectNorthing);
+      if(events.length > 5) {
+        events.shift();
+      }
 
+      var points = map.selectAll("circle").data(events, id);
+
+      points
+        .enter()
+          .append("circle")
+            .attr("r", 5)
+            .attr("cx", projectEasting)
+            .transition()
+              .ease("bounce")
+              .duration(2000)
+              .attr("cy", projectNorthing);
+
+      points
+        .exit()
+        .transition()
+          .duration(2000)
+          .style("opacity", 0)
+        .remove();
+
+      var notices = d3.select("#notices").selectAll("li").data(events, id);
+
+      notices
+        .enter()
+          .insert("li", ":first-child")
+            .text(id)
+            .style("opacity", 0)
+            .transition()
+              .duration(1000)
+              .style("opacity", 1);
+
+      notices
+        .exit()
+          .transition()
+            .duration(1000)
+            .style("opacity", 0)
+          .remove();
     });
   </script>
 </body>
