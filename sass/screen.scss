@@ -3,6 +3,8 @@
 @import "compass/css3/border-radius";
 @import "compass/utilities/general/clearfix";
 
+$highlight: #EA2E49;
+
 body {
   background: #DAEDE2;
 }
@@ -20,10 +22,13 @@ body {
   li {
     @include border-radius(6px);
     @include box-shadow;
-    padding: 5px;
+    padding: 10px;
     margin: 5px;
     background: #333745;
     color: #FFFFFF;
+    .amount {
+      float: right;
+    }
   }
 }
 
@@ -36,7 +41,7 @@ body {
     stroke: #262B30;
   }
   circle {
-    fill: #EA2E49;
+    fill: $highlight;
     stroke: #333745;
   }
 }

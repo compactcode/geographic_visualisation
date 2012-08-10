@@ -7,6 +7,7 @@
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
+  <audio id="alert" src="/audio/alert.wav" preload="true"></audio>
   <div id="container">
     <ul id="notices">
       &nbsp;
@@ -24,7 +25,7 @@
 
     var containerCenter = [
       Math.floor(600 / 2),
-      Math.floor(500 / 2)
+      Math.floor(500 / 2) - 50
     ];
 
     var australiaCenter = projection([133.775136, -25.274398]);
@@ -48,12 +49,20 @@
       return event.id;
     }
 
+    function amount(event) {
+      return event.amount;
+    }
+
     function projectEasting(event) {
       return projection([event.latitude, event.longitude])[0];
     }
 
     function projectNorthing(event) {
       return projection([event.latitude, event.longitude])[1];
+    }
+
+    function playAlert() {
+      d3.select("#alert").node().play();
     }
 
     var events = [];
@@ -67,33 +76,54 @@
 
       var points = map.selectAll("circle").data(events, id);
 
+      var introDuration = 2000;
+
+      points
+        .transition()
+          .attr("r", 5);
+
       points
         .enter()
           .append("circle")
+            .each(playAlert)
             .attr("r", 5)
             .attr("cx", projectEasting)
             .transition()
               .ease("bounce")
-              .duration(2000)
-              .attr("cy", projectNorthing);
+              .duration(introDuration)
+              .attr("cy", projectNorthing)
+            .transition()
+              .delay(introDuration)
+                .attr("r", 20);
 
       points
         .exit()
-        .transition()
-          .duration(2000)
-          .style("opacity", 0)
-        .remove();
+          .transition()
+            .duration(introDuration)
+            .style("opacity", 0)
+          .remove();
 
       var notices = d3.select("#notices").selectAll("li").data(events, id);
 
-      notices
+      var newNotices = notices
         .enter()
-          .insert("li", ":first-child")
-            .text(id)
-            .style("opacity", 0)
-            .transition()
-              .duration(1000)
-              .style("opacity", 1);
+          .insert("li", ":first-child");
+
+      newNotices
+        .append("span")
+          .attr("class", "id")
+          .text(id);
+
+      newNotices
+        .append("span")
+          .attr("class", "amount")
+          .text(amount);
+
+      newNotices
+        .style("opacity", 0)
+          .transition()
+            .duration(1000)
+            .style("opacity", 1);
 
       notices
         .exit()
