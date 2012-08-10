@@ -9,9 +9,9 @@
 <body>
   <audio id="alert" src="/audio/alert.wav" preload="true"></audio>
   <div id="container">
-    <ul id="notices">
+    <ol id="notices">
       &nbsp;
-    </ul>
+    </ol>
     <svg id="map">
     </svg>
   </div>
@@ -61,7 +61,7 @@
       return projection([event.latitude, event.longitude])[1];
     }
 
-    function playAlert() {
+    function soundAlert() {
       d3.select("#alert").node().play();
     }
 
@@ -85,7 +85,7 @@
       points
         .enter()
           .append("circle")
-            .each(playAlert)
+            .each(soundAlert)
             .attr("r", 5)
             .attr("cx", projectEasting)
             .transition()
@@ -105,9 +105,11 @@
 
       var notices = d3.select("#notices").selectAll("li").data(events, id);
 
+      notices.attr("class", null);
+
       var newNotices = notices
         .enter()
-          .insert("li", ":first-child");
+        .insert("li", ":first-child");
 
       newNotices
         .append("span")

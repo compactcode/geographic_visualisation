@@ -101,19 +101,24 @@ body {
 #notices li .amount {
   float: right;
 }
+/* line 33, ../../sass/screen.scss */
+#notices li.current {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 
-/* line 35, ../../sass/screen.scss */
+/* line 39, ../../sass/screen.scss */
 #map {
   width: 600px;
   height: 500px;
   float: left;
 }
-/* line 39, ../../sass/screen.scss */
+/* line 43, ../../sass/screen.scss */
 #map path {
   fill: #77C4D3;
   stroke: #262B30;
 }
-/* line 43, ../../sass/screen.scss */
+/* line 47, ../../sass/screen.scss */
 #map circle {
   fill: #ea2e49;
   stroke: #333745;
